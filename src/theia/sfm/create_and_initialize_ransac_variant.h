@@ -38,8 +38,8 @@
 #include <glog/logging.h>
 
 #include "theia/solvers/exhaustive_ransac.h"
-#include "theia/solvers/lmed.h"
-#include "theia/solvers/prosac.h"
+// #include "theia/solvers/lmed.h"
+// #include "theia/solvers/prosac.h"
 #include "theia/solvers/ransac.h"
 #include "theia/solvers/sample_consensus_estimator.h"
 
@@ -67,12 +67,12 @@ CreateAndInitializeRansacVariant(const RansacType& ransac_type,
     case RansacType::RANSAC:
       ransac_variant.reset(new Ransac<Estimator>(ransac_options, estimator));
       break;
-    case RansacType::PROSAC:
-      ransac_variant.reset(new Prosac<Estimator>(ransac_options, estimator));
-      break;
-    case RansacType::LMED:
-      ransac_variant.reset(new LMed<Estimator>(ransac_options, estimator));
-      break;
+    // case RansacType::PROSAC:
+    //   ransac_variant.reset(new Prosac<Estimator>(ransac_options, estimator));
+    //   break;
+    // case RansacType::LMED:
+    //   ransac_variant.reset(new LMed<Estimator>(ransac_options, estimator));
+    //   break;
     case RansacType::EXHAUSTIVE:
       ransac_variant.reset(
           new ExhaustiveRansac<Estimator>(ransac_options, estimator));
