@@ -1,3 +1,8 @@
+Cloned from <https://github.com/sweeneychris/TheiaSfM>.
+
+Original README
+---------------
+
 Copyright 2015-2016 Chris Sweeney (sweeney.chris.m@gmail.com)
 UC Santa Barbara
 
