@@ -35,7 +35,7 @@
 #include "theia/solvers/random_sampler.h"
 
 #include <algorithm>
-#include <glog/logging.h>
+// #include <glog/logging.h>
 #include <memory>
 #include <numeric>
 #include <stdlib.h>
@@ -51,7 +51,7 @@ RandomSampler::RandomSampler(const std::shared_ptr<RandomNumberGenerator>& rng,
     : Sampler(rng, min_num_samples) {}
 
 bool RandomSampler::Initialize(const int num_datapoints) {
-  CHECK_GE(num_datapoints, this->min_num_samples_);
+  assert(num_datapoints >= this->min_num_samples_);
   sample_indices_.resize(num_datapoints);
   std::iota(sample_indices_.begin(), sample_indices_.end(), 0);
   return true;

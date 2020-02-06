@@ -71,10 +71,12 @@
 
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
-#include <glog/logging.h>
+// #include <glog/logging.h>
 
 #include "theia/math/polynomial.h"
 #include "theia/math/util.h"
+
+#include <iostream>
 
 namespace theia {
 using Eigen::MatrixXd;
@@ -87,7 +89,7 @@ namespace {
 // In: Numerische Mathematik, Volume 13, Number 4 (1969), 293-304,
 // Springer Berlin / Heidelberg. DOI: 10.1007/BF02165404
 void BalanceCompanionMatrix(MatrixXd* companion_matrix_ptr) {
-  CHECK_NOTNULL(companion_matrix_ptr);
+  assert(companion_matrix_ptr != nullptr);
   MatrixXd& companion_matrix = *companion_matrix_ptr;
   MatrixXd companion_matrix_offdiagonal = companion_matrix;
   companion_matrix_offdiagonal.diagonal().setZero();
@@ -138,7 +140,7 @@ void BalanceCompanionMatrix(MatrixXd* companion_matrix_ptr) {
 
 void BuildCompanionMatrix(const VectorXd& polynomial,
                           MatrixXd* companion_matrix_ptr) {
-  CHECK_NOTNULL(companion_matrix_ptr);
+  assert(companion_matrix_ptr != nullptr);
   MatrixXd& companion_matrix = *companion_matrix_ptr;
 
   const int degree = polynomial.size() - 1;
@@ -170,7 +172,8 @@ bool FindPolynomialRootsCompanionMatrix(const Eigen::VectorXd& polynomial_in,
                                         Eigen::VectorXd* real,
                                         Eigen::VectorXd* imaginary) {
   if (polynomial_in.size() == 0) {
-    LOG(ERROR) << "Invalid polynomial of size 0 passed to FindPolynomialRoots";
+    std::cout << "Invalid polynomial of size 0 passed to FindPolynomialRoots" << std::endl;
+    assert(false);
     return false;
   }
 
@@ -179,8 +182,8 @@ bool FindPolynomialRootsCompanionMatrix(const Eigen::VectorXd& polynomial_in,
 
   // Is the polynomial constant?
   if (degree == 0) {
-    LOG(WARNING) << "Trying to extract roots from a constant "
-                 << "polynomial in FindPolynomialRootsCompanionMatrix";
+    std::cout << "Trying to extract roots from a constant "
+                 << "polynomial in FindPolynomialRootsCompanionMatrix" << std::endl;
     // We return true with no roots, not false, as if the polynomial is constant
     // it is correct that there are no roots. It is not the case that they were
     // there, but that we have failed to extract them.
@@ -214,7 +217,8 @@ bool FindPolynomialRootsCompanionMatrix(const Eigen::VectorXd& polynomial_in,
   // Find its (complex) eigenvalues.
   Eigen::EigenSolver<MatrixXd> solver(companion_matrix, false);
   if (solver.info() != Eigen::Success) {
-    LOG(ERROR) << "Failed to extract eigenvalues from companion matrix.";
+    std::cout << "Failed to extract eigenvalues from companion matrix." << std::endl;
+    assert(false);
     return false;
   }
 
@@ -222,9 +226,9 @@ bool FindPolynomialRootsCompanionMatrix(const Eigen::VectorXd& polynomial_in,
   if (real != NULL) {
     *real = solver.eigenvalues().real();
   } else {
-    LOG(WARNING) << "NULL pointer passed as real argument to "
+    std::cout << "NULL pointer passed as real argument to "
                  << "FindPolynomialRoots. Real parts of the roots will not "
-                 << "be returned.";
+                 << "be returned." << std::endl;
   }
   if (imaginary != NULL) {
     *imaginary = solver.eigenvalues().imag();

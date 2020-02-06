@@ -70,10 +70,11 @@
 #include "theia/math/polynomial.h"
 
 #include <Eigen/Core>
-#include <glog/logging.h>
+// #include <glog/logging.h>
 
 #include <cmath>
 #include <limits>
+#include <iostream>
 
 #include "theia/math/find_polynomial_roots_companion_matrix.h"
 
@@ -100,7 +101,7 @@ VectorXd RemoveLeadingZeros(const VectorXd& polynomial_in) {
 
 VectorXd DifferentiatePolynomial(const VectorXd& polynomial) {
   const int degree = static_cast<int>(polynomial.rows()) - 1;
-  CHECK_GE(degree, 0);
+  assert(degree >= 0);
 
   // Degree zero polynomials are constants, and their derivative does
   // not result in a smaller degree polynomial, just a degree zero
@@ -175,7 +176,7 @@ VectorXd AddPolynomials(const VectorXd& poly1, const VectorXd& poly2) {
 void FindLinearPolynomialRoots(const VectorXd& polynomial,
                                VectorXd* real,
                                VectorXd* imaginary) {
-  CHECK_EQ(polynomial.size(), 2);
+  assert(polynomial.size() == 2);
   if (real != NULL) {
     real->resize(1);
     (*real)(0) = -polynomial(1) / polynomial(0);
@@ -189,7 +190,7 @@ void FindLinearPolynomialRoots(const VectorXd& polynomial,
 void FindQuadraticPolynomialRoots(const VectorXd& polynomial,
                                   VectorXd* real,
                                   VectorXd* imaginary) {
-  CHECK_EQ(polynomial.size(), 3);
+  assert(polynomial.size() == 3);
   const double a = polynomial(0);
   const double b = polynomial(1);
   const double c = polynomial(2);
@@ -262,8 +263,8 @@ void MinimizePolynomial(const VectorXd& polynomial,
   const VectorXd derivative = DifferentiatePolynomial(polynomial);
   VectorXd roots_real;
   if (!FindPolynomialRoots(derivative, &roots_real, NULL)) {
-    LOG(WARNING) << "Unable to find the critical points of "
-                 << "the interpolating polynomial.";
+    std::cout << "Unable to find the critical points of "
+                 << "the interpolating polynomial." << std::endl;
     return;
   }
 

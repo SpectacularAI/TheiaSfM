@@ -35,13 +35,15 @@
 #ifndef THEIA_SFM_CREATE_AND_INITIALIZE_RANSAC_VARIANT_H_
 #define THEIA_SFM_CREATE_AND_INITIALIZE_RANSAC_VARIANT_H_
 
-#include <glog/logging.h>
+// #include <glog/logging.h>
 
 #include "theia/solvers/exhaustive_ransac.h"
 // #include "theia/solvers/lmed.h"
 // #include "theia/solvers/prosac.h"
 #include "theia/solvers/ransac.h"
 #include "theia/solvers/sample_consensus_estimator.h"
+
+#include <iostream>
 
 namespace theia {
 
@@ -82,9 +84,11 @@ CreateAndInitializeRansacVariant(const RansacType& ransac_type,
       break;
   }
 
-  CHECK(ransac_variant->Initialize()) << "Could not initialize ransac "
+  bool result = ransac_variant->Initialize();
+  if (!result) std::cout << "Could not initialize ransac "
                                          "estimator for estimating two view "
-                                         "reconstructions";
+                                         "reconstructions" << std::endl;
+  assert(result);
   return ransac_variant;
 }
 

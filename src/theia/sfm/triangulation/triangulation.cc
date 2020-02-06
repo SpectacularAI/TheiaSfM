@@ -39,7 +39,7 @@
 #include <Eigen/Eigenvalues>
 #include <Eigen/Geometry>
 #include <Eigen/SVD>
-#include <glog/logging.h>
+// #include <glog/logging.h>
 #include <vector>
 
 #include "theia/matching/feature_correspondence.h"
@@ -130,9 +130,9 @@ bool Triangulate(const Matrix3x4d& pose1,
 bool TriangulateMidpoint(const std::vector<Vector3d>& ray_origin,
                          const std::vector<Vector3d>& ray_direction,
                          Eigen::Vector4d* triangulated_point) {
-  CHECK_NOTNULL(triangulated_point);
-  CHECK_GE(ray_origin.size(), 2);
-  CHECK_EQ(ray_origin.size(), ray_direction.size());
+  assert(triangulated_point != nullptr);
+  assert(ray_origin.size() >= 2);
+  assert(ray_origin.size() == ray_direction.size());
 
   Eigen::Matrix4d A;
   A.setZero();
@@ -178,7 +178,7 @@ bool TriangulateDLT(const Matrix3x4d& pose1,
 bool TriangulateNViewSVD(const std::vector<Matrix3x4d>& poses,
                          const std::vector<Vector2d>& points,
                          Vector4d* triangulated_point) {
-  CHECK_EQ(poses.size(), points.size());
+  assert(poses.size() == points.size());
 
   MatrixXd design_matrix(3 * points.size(), 4 + points.size());
 
@@ -197,7 +197,7 @@ bool TriangulateNViewSVD(const std::vector<Matrix3x4d>& poses,
 bool TriangulateNView(const std::vector<Matrix3x4d>& poses,
                       const std::vector<Vector2d>& points,
                       Vector4d* triangulated_point) {
-  CHECK_EQ(poses.size(), points.size());
+  assert(poses.size() == points.size());
 
   Matrix4d design_matrix = Matrix4d::Zero();
   for (int i = 0; i < points.size(); i++) {

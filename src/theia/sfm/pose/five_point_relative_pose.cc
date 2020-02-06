@@ -35,7 +35,7 @@
 #include "theia/sfm/pose/five_point_relative_pose.h"
 
 #include <Eigen/Dense>
-#include <glog/logging.h>
+// #include <glog/logging.h>
 
 #include <cmath>
 #include <ctime>
@@ -212,10 +212,8 @@ Matrix<double, 10, 20> BuildConstraintMatrix(
 bool FivePointRelativePose(const std::vector<Vector2d>& image1_points,
                            const std::vector<Vector2d>& image2_points,
                            std::vector<Matrix3d>* essential_matrices) {
-  CHECK_EQ(image1_points.size(), image2_points.size());
-  CHECK_GE(image1_points.size(), 5) << "You must supply at least 5 "
-                                       "correspondences for the 5 point "
-                                       "essential matrix algorithm.";
+  assert(image1_points.size() == image2_points.size());
+  assert(image1_points.size() >= 5);
 
   // Step 1. Create the nx9 matrix containing epipolar constraints.
   //   Essential matrix is a linear combination of the 4 vectors spanning the

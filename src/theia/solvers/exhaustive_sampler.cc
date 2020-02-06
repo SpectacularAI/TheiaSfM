@@ -35,7 +35,7 @@
 #include "theia/solvers/exhaustive_sampler.h"
 
 #include <algorithm>
-#include <glog/logging.h>
+// #include <glog/logging.h>
 #include <vector>
 
 #include "theia/solvers/sampler.h"
@@ -46,13 +46,11 @@ ExhaustiveSampler::ExhaustiveSampler(
     const std::shared_ptr<RandomNumberGenerator>& rng,
     const int min_num_samples)
     : Sampler(rng, min_num_samples), i_(0), j_(1) {
-  CHECK_EQ(this->min_num_samples_, 2) << "ExhaustiveSampler makes a hard "
-                                         "assumption that the number of "
-                                         "samples needed is 2.";
+  assert(this->min_num_samples_ == 2);
 }
 
 bool ExhaustiveSampler::Initialize(const int num_datapoints) {
-  CHECK_GE(num_datapoints, this->min_num_samples_);
+  assert(num_datapoints >= this->min_num_samples_);
   num_datapoints_ = num_datapoints;
   return true;
 }

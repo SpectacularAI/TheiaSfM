@@ -141,14 +141,14 @@ else (GFLAGS_FOUND)
 endif (GFLAGS_FOUND)
 
 # Google Logging
-message("-- Check for Google Log")
-find_package(Glog REQUIRED)
-if (GLOG_FOUND)
-  message("-- Found Google Logging: ${GLOG_INCLUDE_DIRS}")
-else (GLOG_FOUND)
-  message(FATAL_ERROR "Can't find Google Logging. Please set GLOG_INCLUDE_DIR & "
-    "GLOG_LIBRARY")
-endif (GLOG_FOUND)
+# message("-- Check for Google Log")
+# find_package(Glog REQUIRED)
+# if (GLOG_FOUND)
+#   message("-- Found Google Logging: ${GLOG_INCLUDE_DIRS}")
+# else (GLOG_FOUND)
+#   message(FATAL_ERROR "Can't find Google Logging. Please set GLOG_INCLUDE_DIR & "
+#     "GLOG_LIBRARY")
+# endif (GLOG_FOUND)
 
 # Ceres
 # message("-- Check for Ceres")
@@ -202,7 +202,7 @@ include_directories(
   src
   # ${CERES_INCLUDE_DIRS}
   ${GFLAGS_INCLUDE_DIRS}
-  ${GLOG_INCLUDE_DIRS}
+  # ${GLOG_INCLUDE_DIRS}
   # ${SUITESPARSE_INCLUDE_DIRS}
   # ${OPENIMAGEIO_INCLUDE_DIRS}
 )

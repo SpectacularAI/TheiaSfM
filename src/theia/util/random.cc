@@ -34,7 +34,7 @@
 
 #include "theia/util/random.h"
 
-#include <glog/logging.h>
+// #include <glog/logging.h>
 #include <chrono>  // NOLINT
 #include <random>
 

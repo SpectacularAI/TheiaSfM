@@ -35,7 +35,7 @@
 #ifndef THEIA_SOLVERS_MLE_QUALITY_MEASUREMENT_H_
 #define THEIA_SOLVERS_MLE_QUALITY_MEASUREMENT_H_
 
-#include <glog/logging.h>
+// #include <glog/logging.h>
 #include <algorithm>
 #include <limits>
 #include <memory>

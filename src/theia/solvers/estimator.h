@@ -35,7 +35,7 @@
 #ifndef THEIA_SOLVERS_ESTIMATOR_H_
 #define THEIA_SOLVERS_ESTIMATOR_H_
 
-#include <glog/logging.h>
+// #include <glog/logging.h>
 #ifdef THEIA_USE_OPENMP
 #include <omp.h>
 #endif

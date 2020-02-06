@@ -37,7 +37,7 @@
 
 #include <algorithm>
 #include <cmath>
-#include <glog/logging.h>
+// #include <glog/logging.h>
 #include <limits>
 #include <memory>
 #include <vector>
@@ -188,18 +188,17 @@ template <class ModelEstimator>
 SampleConsensusEstimator<ModelEstimator>::SampleConsensusEstimator(
     const RansacParameters& ransac_params, const ModelEstimator& estimator)
     : ransac_params_(ransac_params), estimator_(estimator) {
-  CHECK_GT(ransac_params.error_thresh, 0)
-      << "Error threshold must be set to greater than zero";
-  CHECK_LE(ransac_params.min_inlier_ratio, 1.0);
-  CHECK_GE(ransac_params.min_inlier_ratio, 0.0);
-  CHECK_LT(ransac_params.failure_probability, 1.0);
-  CHECK_GT(ransac_params.failure_probability, 0.0);
-  CHECK_GE(ransac_params.max_iterations, ransac_params.min_iterations);
+  assert(ransac_params.error_thresh > 0);
+  assert(ransac_params.min_inlier_ratio <= 1.0);
+  assert(ransac_params.min_inlier_ratio >= 0.0);
+  assert(ransac_params.failure_probability < 1.0);
+  assert(ransac_params.failure_probability > 0.0);
+  assert(ransac_params.max_iterations >= ransac_params.min_iterations);
 }
 
 template <class ModelEstimator>
 bool SampleConsensusEstimator<ModelEstimator>::Initialize(Sampler* sampler) {
-  CHECK_NOTNULL(sampler);
+  assert(sampler != nullptr);
   sampler_.reset(sampler);
 
   if (ransac_params_.use_mle) {
@@ -216,7 +215,7 @@ int SampleConsensusEstimator<ModelEstimator>::ComputeMaxIterations(
     const double min_sample_size,
     const double inlier_ratio,
     const double log_failure_prob) const {
-  CHECK_GT(inlier_ratio, 0.0);
+  assert(inlier_ratio > 0.0);
   if (inlier_ratio == 1.0) {
     return ransac_params_.min_iterations;
   }
@@ -245,13 +244,12 @@ int SampleConsensusEstimator<ModelEstimator>::ComputeMaxIterations(
 template <class ModelEstimator>
 bool SampleConsensusEstimator<ModelEstimator>::Estimate(
     const std::vector<Datum>& data, Model* best_model, RansacSummary* summary) {
-  CHECK_GT(data.size(), 0)
-      << "Cannot perform estimation with 0 data measurements!";
-  CHECK_NOTNULL(sampler_.get());
-  CHECK_NOTNULL(quality_measurement_.get());
-  CHECK_NOTNULL(summary);
+  assert(data.size() > 0);
+  assert(sampler_.get() != nullptr);
+  assert(quality_measurement_.get() != nullptr);
+  assert(summary != nullptr);
   summary->inliers.clear();
-  CHECK_NOTNULL(best_model);
+  assert(best_model != nullptr);
 
   // Initialize the sampler with the size of the data input.
   if (!sampler_->Initialize(data.size())) {
@@ -324,8 +322,8 @@ bool SampleConsensusEstimator<ModelEstimator>::Estimate(
                 estimator_.SampleSize(), inlier_ratio, log_failure_prob),
             max_iterations);
 
-        VLOG(3) << "Inlier ratio = " << inlier_ratio
-                << " and max number of iterations = " << max_iterations;
+        // VLOG(3) << "Inlier ratio = " << inlier_ratio
+        //         << " and max number of iterations = " << max_iterations;
       }
     }
   }
