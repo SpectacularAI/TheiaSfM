@@ -222,14 +222,14 @@ include_directories(
 # include_directories(SYSTEM ${EIGEN_INCLUDE_DIRS})
 
 # build Third party libraries included in distro.
-add_subdirectory(libraries)
-include_directories(
+# add_subdirectory(libraries)
+#include_directories(
 #   libraries
 #   libraries/spectra
 #   ${akaze_SOURCE_DIR}
 #   ${akaze_INCLUDE_DIR}
-  ${cereal_SOURCE_DIR}
-  ${cereal_SOURCE_DIR}/include
+#   ${cereal_SOURCE_DIR}
+#   ${cereal_SOURCE_DIR}/include
 #   ${flann_SOURCE_DIR}
 #   ${flann_SOURCE_DIR}/src/cpp
 #   ${gtest_SOURCE_DIR}/include
@@ -239,7 +239,7 @@ include_directories(
 #   ${stlplus3_SOURCE_DIR}
 #   ${vlfeat_SOURCE_DIR}
 #   ${visual_sfm_SOURCE_DIR}
-)
+#)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(OptimizeTheiaCompilerFlags)

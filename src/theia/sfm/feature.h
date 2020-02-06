@@ -39,7 +39,7 @@
 #include <functional>
 #include <utility>
 
-#include "theia/io/eigen_serializable.h"
+// #include "theia/io/eigen_serializable.h"
 #include "theia/util/hash.h"
 
 namespace theia {
@@ -50,9 +50,9 @@ typedef Eigen::Vector2d Feature;
 
 // Templated method for disk I/O with cereal. This method tells cereal which
 // data members should be used when reading/writing to/from disk.
-template <class Archive>
-void serialize(Archive& ar, theia::Feature& feature) {  // NOLINT
-  ar(feature);
-}
+// template <class Archive>
+// void serialize(Archive& ar, theia::Feature& feature) {  // NOLINT
+//   ar(feature);
+// }
 
 #endif  // THEIA_SFM_FEATURE_H_
