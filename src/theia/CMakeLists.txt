@@ -202,18 +202,18 @@ set(THEIA_SRC
   # util/timer.cc
   )
 
-set(THEIA_LIBRARY_DEPENDENCIES
-  ${CERES_LIBRARIES}
-  ${GFLAGS_LIBRARIES}
-  ${GLOG_LIBRARIES}
-  ${SUITESPARSE_LIBRARIES}
-  ${OPENIMAGEIO_LIBRARIES}
-  akaze
-  flann_cpp
-  statx
-  stlplus3
-  vlfeat
-  visual_sfm)
+# set(THEIA_LIBRARY_DEPENDENCIES
+#   ${CERES_LIBRARIES}
+#   ${GFLAGS_LIBRARIES}
+#   ${GLOG_LIBRARIES}
+#   ${SUITESPARSE_LIBRARIES}
+#   ${OPENIMAGEIO_LIBRARIES}
+#   akaze
+#   flann_cpp
+#   statx
+#   stlplus3
+#   vlfeat
+#   visual_sfm)
 
 set(THEIA_LIBRARY_SOURCE
   ${THEIA_SRC}
@@ -224,7 +224,7 @@ set_target_properties(theia PROPERTIES
   VERSION ${THEIA_VERSION}
   SOVERSION ${THEIA_VERSION_MAJOR}
   )
-target_link_libraries(theia ${THEIA_LIBRARY_DEPENDENCIES})
+# target_link_libraries(theia ${THEIA_LIBRARY_DEPENDENCIES})
 
 # install(TARGETS theia
 #   EXPORT  TheiaExport
