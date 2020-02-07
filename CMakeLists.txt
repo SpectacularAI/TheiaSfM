@@ -110,8 +110,9 @@ add_definitions(-DTHEIA_DATA_DIR="${CMAKE_SOURCE_DIR}/data")
 #   message("-- Found Eigen version ${EIGEN_VERSION}: ${EIGEN_INCLUDE_DIRS}")
 # endif (EIGEN_FOUND)
 
-set(EIGEN_INCLUDE_DIRS "include/eigen3")
-include_directories(${EIGEN_INCLUDE_DIRS})
+# set(EIGEN_INCLUDE_DIRS "include/eigen3")
+# include_directories(${EIGEN_INCLUDE_DIRS})
+include_directories(${EIGEN3_INCLUDE_DIR})
 
 # Use a larger inlining threshold for Clang, since it hobbles Eigen,
 # resulting in an unreasonably slow version of the blas routines. The
@@ -257,3 +258,76 @@ add_subdirectory(src/theia)
 # endif (BUILD_DOCUMENTATION)
 
 # ---------------- Install commands ----------------- #
+# Install the .h files
+file(GLOB THEIA_HDRS ${CMAKE_SOURCE_DIR}/include/theia/*.h)
+install(FILES ${THEIA_HDRS} DESTINATION include/theia)
+
+file(GLOB_RECURSE THEIA_INTERNAL_HDRS ${CMAKE_SOURCE_DIR}/src/theia/*.h)
+install(DIRECTORY src/theia/ DESTINATION include/theia FILES_MATCHING PATTERN "*.h")
+
+install(DIRECTORY libraries/ DESTINATION include/theia/libraries FILES_MATCHING PATTERN "*.h*")
+
+# Add an uninstall target to remove all installed files.
+configure_file("${CMAKE_SOURCE_DIR}/cmake/uninstall.cmake.in"
+               "${CMAKE_BINARY_DIR}/cmake/uninstall.cmake"
+               IMMEDIATE @ONLY)
+
+add_custom_target(uninstall
+                  COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/cmake/uninstall.cmake)
+
+# Set up install directories. INCLUDE_INSTALL_DIR, LIB_INSTALL_DIR and
+# CMAKECONFIG_INSTALL_DIR must not be absolute paths.
+if (WIN32)
+  set(INCLUDE_INSTALL_DIR Include)
+  set(LIB_INSTALL_DIR Lib)
+  set(CMAKECONFIG_INSTALL_DIR CMake)
+  set(RELATIVE_CMAKECONFIG_INSTALL_DIR CMake)
+else ()
+  set(INCLUDE_INSTALL_DIR include)
+  set(LIB_INSTALL_DIR lib)
+  set(CMAKECONFIG_INSTALL_DIR share/Theia)
+  set(RELATIVE_CMAKECONFIG_INSTALL_DIR share/Theia)
+endif ()
+
+# This "exports" all targets which have been put into the export set
+# "TheiaExport". This means that CMake generates a file with the given
+# filename, which can later on be loaded by projects using this package.
+# This file contains ADD_LIBRARY(bar IMPORTED) statements for each target
+# in the export set, so when loaded later on CMake will create "imported"
+# library targets from these, which can be used in many ways in the same way
+# as a normal library target created via a normal ADD_LIBRARY().
+install(EXPORT TheiaExport
+        DESTINATION ${RELATIVE_CMAKECONFIG_INSTALL_DIR} FILE TheiaTargets.cmake)
+
+# Figure out the relative path from the installed Config.cmake file to the
+# install prefix (which may be at runtime different from the chosen
+# CMAKE_INSTALL_PREFIX if under Windows the package was installed anywhere)
+# This relative path will be configured into the TheiaConfig.cmake.
+file(RELATIVE_PATH INSTALL_ROOT_REL_CONFIG_INSTALL_DIR
+     ${CMAKE_INSTALL_PREFIX}/${CMAKECONFIG_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX})
+
+# Create a TheiaConfig.cmake file. <name>Config.cmake files are searched by
+# FIND_PACKAGE() automatically. We configure that file so that we can put any
+# information we want in it, e.g. version numbers, include directories, etc.
+configure_file("${CMAKE_SOURCE_DIR}/cmake/TheiaConfig.cmake.in"
+               "${CMAKE_CURRENT_BINARY_DIR}/TheiaConfig.cmake" @ONLY)
+
+# Additionally, when CMake has found a TheiaConfig.cmake, it can check for a
+# TheiaConfigVersion.cmake in the same directory when figuring out the version
+# of the package when a version has been specified in the FIND_PACKAGE() call,
+# e.g. FIND_PACKAGE(Theia [0.5.2] REQUIRED). The version argument is optional.
+configure_file("${CMAKE_SOURCE_DIR}/cmake/TheiaConfigVersion.cmake.in"
+               "${CMAKE_CURRENT_BINARY_DIR}/TheiaConfigVersion.cmake" @ONLY)
+
+# Install these files into the same directory as the generated exports-file,
+# we include the FindPackage scripts for libraries whose headers are included
+# in the public API of Theia and should thus be present in THEIA_INCLUDE_DIRS.
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/TheiaConfig.cmake"
+              "${CMAKE_CURRENT_BINARY_DIR}/TheiaConfigVersion.cmake"
+              # "${CMAKE_SOURCE_DIR}/cmake/FindEigen.cmake"
+              # "${CMAKE_SOURCE_DIR}/cmake/FindGlog.cmake"
+              # "${CMAKE_SOURCE_DIR}/cmake/FindGflags.cmake"
+              # "${CMAKE_SOURCE_DIR}/cmake/FindOpenImageIO.cmake"
+              # "${CMAKE_SOURCE_DIR}/cmake/FindRocksDB.cmake"
+              # "${CMAKE_SOURCE_DIR}/cmake/FindSuiteSparse.cmake"
+              DESTINATION ${CMAKECONFIG_INSTALL_DIR})

@@ -226,11 +226,11 @@ set_target_properties(theia PROPERTIES
   )
 # target_link_libraries(theia ${THEIA_LIBRARY_DEPENDENCIES})
 
-# install(TARGETS theia
-#   EXPORT  TheiaExport
-#   RUNTIME DESTINATION bin
-#   LIBRARY DESTINATION lib${LIB_SUFFIX}
-#   ARCHIVE DESTINATION lib${LIB_SUFFIX})
+install(TARGETS theia
+  EXPORT  TheiaExport
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib${LIB_SUFFIX}
+  ARCHIVE DESTINATION lib${LIB_SUFFIX})
 
 # if (BUILD_TESTING)
 #   macro (GTEST FILENAME)
