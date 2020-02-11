@@ -37,6 +37,8 @@ if (COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif (COMMAND cmake_policy)
 
+set(CMAKE_CXX_STANDARD 14)
+
 # Disable warnings about rpath on MacOS X for now.
 # TODO(cmsweeney): Figure out the proper way to handle this!
 if(POLICY CMP0042)
