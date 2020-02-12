@@ -245,9 +245,8 @@ include_directories(
 #)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-# NOTE On Mac enabling these crash the build.
-# include(OptimizeTheiaCompilerFlags)
-# optimizetheiacompilerflags()
+include(OptimizeTheiaCompilerFlags)
+optimizetheiacompilerflags()
 
 add_subdirectory(src/theia)
 # add_subdirectory(applications)
