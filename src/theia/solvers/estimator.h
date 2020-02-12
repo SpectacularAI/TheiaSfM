@@ -80,6 +80,8 @@ template <typename DatumType, typename ModelType> class Estimator {
   // Refine the model based on an updated subset of data, and a pre-computed
   // model. Can be optionally implemented.
   virtual bool RefineModel(const std::vector<Datum>& data, Model* model) const {
+    (void)data;
+    (void)model;
     return true;
   }
 
@@ -119,7 +121,10 @@ template <typename DatumType, typename ModelType> class Estimator {
 
   // Enable a quick check to see if the model is valid. This can be a geometric
   // check or some other verification of the model structure.
-  virtual bool ValidModel(const Model& model) const { return true; }
+  virtual bool ValidModel(const Model& model) const {
+    (void)model;
+    return true;
+  }
 };
 
 }  // namespace theia

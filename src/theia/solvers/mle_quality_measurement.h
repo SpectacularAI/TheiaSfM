@@ -59,7 +59,7 @@ class MLEQualityMeasurement : public QualityMeasurement {
                      std::vector<int>* inliers) override {
     inliers->reserve(residuals.size());
     double mle_score = 0.0;
-    for (int i = 0; i < residuals.size(); i++) {
+    for (int i = 0; i < static_cast<int>(residuals.size()); i++) {
       if (residuals[i] < error_thresh_) {
         mle_score += residuals[i];
         inliers->emplace_back(i);

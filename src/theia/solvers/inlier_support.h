@@ -54,7 +54,7 @@ class InlierSupport : public QualityMeasurement {
   double ComputeCost(const std::vector<double>& residuals,
                      std::vector<int>* inliers) override {
     inliers->reserve(residuals.size());
-    for (int i = 0; i < residuals.size(); i++) {
+    for (int i = 0; i < static_cast<int>(residuals.size()); i++) {
       if (residuals[i] < this->error_thresh_) {
         inliers->emplace_back(i);
       }
