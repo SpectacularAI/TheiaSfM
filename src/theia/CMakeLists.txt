@@ -114,7 +114,7 @@ set(THEIA_SRC
   # sfm/estimate_track.cc
   # sfm/estimate_twoview_info.cc
   # sfm/estimators/estimate_absolute_pose_with_known_orientation.cc
-  # sfm/estimators/estimate_calibrated_absolute_pose.cc
+  sfm/estimators/estimate_calibrated_absolute_pose.cc
   # sfm/estimators/estimate_dominant_plane_from_points.cc
   # sfm/estimators/estimate_essential_matrix.cc
   # sfm/estimators/estimate_fundamental_matrix.cc
@@ -160,13 +160,13 @@ set(THEIA_SRC
   # sfm/pose/four_point_homography.cc
   # sfm/pose/four_point_relative_pose_partial_rotation.cc
   sfm/pose/fundamental_matrix_util.cc
-  # sfm/pose/perspective_three_point.cc
+  sfm/pose/perspective_three_point.cc
   # sfm/pose/position_from_two_rays.cc
   # sfm/pose/relative_pose_from_two_points_with_known_rotation.cc
   # sfm/pose/seven_point_fundamental_matrix.cc
   # sfm/pose/sim_transform_partial_rotation.cc
   # sfm/pose/test_util.cc
-  # sfm/pose/three_point_relative_pose_partial_rotation.cc
+  sfm/pose/three_point_relative_pose_partial_rotation.cc
   # sfm/pose/two_point_pose_partial_rotation.cc
   sfm/pose/util.cc
   # sfm/reconstruction.cc
