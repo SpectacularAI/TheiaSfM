@@ -87,7 +87,7 @@ set(THEIA_SRC
   # matching/feature_matcher_utils.cc
   # matching/fisher_vector_extractor.cc
   # matching/guided_epipolar_matcher.cc
-  # math/closed_form_polynomial_solver.cc
+  math/closed_form_polynomial_solver.cc
   # math/constrained_l1_solver.cc
   math/find_polynomial_roots_companion_matrix.cc
   # math/find_polynomial_roots_jenkins_traub.cc
@@ -167,7 +167,7 @@ set(THEIA_SRC
   # sfm/pose/sim_transform_partial_rotation.cc
   # sfm/pose/test_util.cc
   sfm/pose/three_point_relative_pose_partial_rotation.cc
-  # sfm/pose/two_point_pose_partial_rotation.cc
+  sfm/pose/two_point_pose_partial_rotation.cc
   sfm/pose/util.cc
   # sfm/reconstruction.cc
   # sfm/reconstruction_builder.cc
