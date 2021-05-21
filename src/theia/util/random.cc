@@ -79,8 +79,9 @@ float RandomNumberGenerator::RandFloat(const float lower, const float upper) {
 
 // Get a random int between lower and upper (inclusive).
 int RandomNumberGenerator::RandInt(const int lower, const int upper) {
-  std::uniform_int_distribution<int> distribution(lower, upper);
-  return distribution(util_generator);
+  // Not using `std::uniform_int_distribution` because it's not guaranteed to
+  // be deterministic across machines.
+  return lower + (util_generator() % (upper - lower + 1));
 }
 
 // Gaussian Distribution with the corresponding mean and std dev.
