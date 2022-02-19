@@ -37,6 +37,7 @@
 
 #include <Eigen/Core>
 #include <vector>
+#include <memory>
 
 #include "theia/sfm/create_and_initialize_ransac_variant.h"
 
@@ -62,6 +63,19 @@ bool EstimateCalibratedAbsolutePose(
     const std::vector<FeatureCorrespondence2D3D>& normalized_correspondences,
     CalibratedAbsolutePose* absolute_pose,
     RansacSummary* ransac_summary);
+
+struct ReusableCalibratedAbsolutePoseEstimator {
+    static std::unique_ptr<ReusableCalibratedAbsolutePoseEstimator> build(
+      const RansacParameters& ransac_params,
+      const RansacType& ransac_type);
+
+    virtual ~ReusableCalibratedAbsolutePoseEstimator();
+
+    virtual bool estimate(
+        const std::vector<FeatureCorrespondence2D3D>& normalized_correspondences,
+        CalibratedAbsolutePose* absolute_pose,
+        RansacSummary* ransac_summary) = 0;
+};
 
 }  // namespace theia
 

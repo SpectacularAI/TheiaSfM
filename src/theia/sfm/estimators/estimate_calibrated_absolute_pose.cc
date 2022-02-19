@@ -57,6 +57,11 @@ using Eigen::Vector3d;
 // focal length with the principal point at (0, 0).
 class CalibratedAbsolutePoseEstimator
     : public Estimator<FeatureCorrespondence2D3D, CalibratedAbsolutePose> {
+ private:
+    // note: not "fixed-size-vectorizable" so no need to use aligned_allocator
+    // https://eigen.tuxfamily.org/dox/group__TopicFixedSizeVectorizable.html
+    std::vector<Eigen::Matrix3d> rotations;
+    std::vector<Eigen::Vector3d> translations;
  public:
   CalibratedAbsolutePoseEstimator() {}
 
@@ -74,8 +79,12 @@ class CalibratedAbsolutePoseEstimator
                                              correspondences[1].world_point,
                                              correspondences[2].world_point};
 
-    std::vector<Eigen::Matrix3d> rotations;
-    std::vector<Eigen::Vector3d> translations;
+    // avoid massive reallocation if called frequently
+    auto mutable_this = const_cast<CalibratedAbsolutePoseEstimator&>(*this);
+    auto &rotations = mutable_this.rotations;
+    auto &translations = mutable_this.translations;
+    rotations.clear();
+    translations.clear();
     if (!PoseFromThreePoints(features,
                              world_points,
                              &rotations,
@@ -104,28 +113,47 @@ class CalibratedAbsolutePoseEstimator
          (correspondence.world_point - absolute_pose.position)).hnormalized();
     return (reprojected_feature - correspondence.feature).squaredNorm();
   }
-
- private:
-  DISALLOW_COPY_AND_ASSIGN(CalibratedAbsolutePoseEstimator);
 };
 
+class ReusableCalibratedAbsolutePoseEstimatorImpl : public ReusableCalibratedAbsolutePoseEstimator {
+private:
+  CalibratedAbsolutePoseEstimator absolute_pose_estimator;
+  std::unique_ptr<SampleConsensusEstimator<CalibratedAbsolutePoseEstimator> > ransac;
+
+public:
+  ReusableCalibratedAbsolutePoseEstimatorImpl(
+    const RansacParameters& ransac_params,
+    const RansacType& ransac_type)
+  {
+    ransac = CreateAndInitializeRansacVariant(ransac_type, ransac_params, absolute_pose_estimator);
+  }
+
+  bool estimate(
+      const std::vector<FeatureCorrespondence2D3D>& normalized_correspondences,
+      CalibratedAbsolutePose* absolute_pose,
+      RansacSummary* ransac_summary) final {
+      // Estimate the absolute pose.
+      return ransac->Estimate(normalized_correspondences, absolute_pose, ransac_summary);
+  }
+};
 }  // namespace
+
+std::unique_ptr<ReusableCalibratedAbsolutePoseEstimator> ReusableCalibratedAbsolutePoseEstimator::build(
+      const RansacParameters& ransac_params,
+      const RansacType& ransac_type) {
+  return std::make_unique<ReusableCalibratedAbsolutePoseEstimatorImpl>(ransac_params, ransac_type);
+}
+
+ReusableCalibratedAbsolutePoseEstimator::~ReusableCalibratedAbsolutePoseEstimator() = default;
 
 bool EstimateCalibratedAbsolutePose(
     const RansacParameters& ransac_params,
     const RansacType& ransac_type,
     const std::vector<FeatureCorrespondence2D3D>& normalized_correspondences,
     CalibratedAbsolutePose* absolute_pose,
-    RansacSummary* ransac_summary) {
-  CalibratedAbsolutePoseEstimator absolute_pose_estimator;
-  std::unique_ptr<SampleConsensusEstimator<CalibratedAbsolutePoseEstimator> >
-      ransac = CreateAndInitializeRansacVariant(ransac_type,
-                                                ransac_params,
-                                                absolute_pose_estimator);
-  // Estimate the absolute pose.
-  return ransac->Estimate(normalized_correspondences,
-                          absolute_pose,
-                          ransac_summary);
+    RansacSummary* ransac_summary)
+{
+  return ReusableCalibratedAbsolutePoseEstimatorImpl(ransac_params, ransac_type)
+    .estimate(normalized_correspondences, absolute_pose, ransac_summary);
 }
-
 }  // namespace theia
