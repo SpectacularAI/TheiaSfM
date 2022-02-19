@@ -180,6 +180,14 @@ class SampleConsensusEstimator {
 
   // Estimator to use for generating models.
   const ModelEstimator& estimator_;
+
+ private:
+  std::vector<int> data_subset_indices;
+  std::vector<Model> temp_models;
+  std::vector<int> inlier_indices;
+  std::vector<Datum> data_subset;
+  std::vector<double> residuals;
+  std::vector<double> best_residuals;
 };
 
 // --------------------------- Implementation --------------------------------//
@@ -274,12 +282,12 @@ bool SampleConsensusEstimator<ModelEstimator>::Estimate(
   for (summary->num_iterations = 0; summary->num_iterations < max_iterations;
        summary->num_iterations++) {
     // Sample subset. Proceed if successfully sampled.
-    std::vector<int> data_subset_indices;
+    data_subset_indices.clear();
     if (!sampler_->Sample(&data_subset_indices)) {
       continue;
     }
     // Get the corresponding data elements for the subset.
-    std::vector<Datum> data_subset(data_subset_indices.size());
+    data_subset.resize(data_subset_indices.size());
     for (int i = 0; i < data_subset_indices.size(); i++) {
       data_subset[i] = data[data_subset_indices[i]];
     }
@@ -288,18 +296,17 @@ bool SampleConsensusEstimator<ModelEstimator>::Estimate(
 
     // Estimate model from subset. Skip to next iteration if the model fails to
     // estimate.
-    std::vector<Model> temp_models;
+    temp_models.clear();
     if (!estimator_.EstimateModel(data_subset, &temp_models)) {
       continue;
     }
 
     // Calculate residuals from estimated model.
     for (const Model& temp_model : temp_models) {
-      const std::vector<double> residuals =
-          estimator_.Residuals(data, temp_model);
+      residuals = estimator_.Residuals(data, temp_model);
 
       // Determine cost of the generated model.
-      std::vector<int> inlier_indices;
+      inlier_indices.clear();
       const double sample_cost =
           quality_measurement_->ComputeCost(residuals, &inlier_indices);
       const double inlier_ratio = static_cast<double>(inlier_indices.size()) /
@@ -329,8 +336,7 @@ bool SampleConsensusEstimator<ModelEstimator>::Estimate(
   }
 
   // Compute the final inliers for the best model.
-  const std::vector<double> best_residuals =
-      estimator_.Residuals(data, *best_model);
+  best_residuals = estimator_.Residuals(data, *best_model);
   quality_measurement_->ComputeCost(best_residuals, &summary->inliers);
 
   const double inlier_ratio =
