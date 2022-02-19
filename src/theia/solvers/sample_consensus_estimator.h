@@ -303,7 +303,7 @@ bool SampleConsensusEstimator<ModelEstimator>::Estimate(
 
     // Calculate residuals from estimated model.
     for (const Model& temp_model : temp_models) {
-      residuals = estimator_.Residuals(data, temp_model);
+      estimator_.Residuals(data, temp_model, residuals);
 
       // Determine cost of the generated model.
       inlier_indices.clear();
@@ -336,7 +336,7 @@ bool SampleConsensusEstimator<ModelEstimator>::Estimate(
   }
 
   // Compute the final inliers for the best model.
-  best_residuals = estimator_.Residuals(data, *best_model);
+  estimator_.Residuals(data, *best_model, best_residuals);
   quality_measurement_->ComputeCost(best_residuals, &summary->inliers);
 
   const double inlier_ratio =

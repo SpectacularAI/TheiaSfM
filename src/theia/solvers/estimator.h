@@ -94,14 +94,12 @@ template <typename DatumType, typename ModelType> class Estimator {
   // the errors of multiple points may be estimated simultanesously (e.g.,
   // matrix multiplication to compute the reprojection error of many points at
   // once).
-  virtual std::vector<double> Residuals(const std::vector<Datum>& data,
-                                        const Model& model) const {
-    std::vector<double> residuals(data.size());
+  virtual void Residuals(const std::vector<Datum>& data, const Model& model, std::vector<double> &residuals) const {
+    residuals.resize(data.size());
 #pragma omp parallel for
     for (int i = 0; i < data.size(); i++) {
       residuals[i] = Error(data[i], model);
     }
-    return residuals;
   }
 
   // Returns the set inliers of the data set based on the error threshold
