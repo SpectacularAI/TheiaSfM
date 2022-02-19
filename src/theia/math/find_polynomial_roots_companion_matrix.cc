@@ -84,6 +84,16 @@ using Eigen::VectorXd;
 
 namespace {
 
+struct Workspace {
+  VectorXd polynomial;
+  MatrixXd companion_matrix;
+  Eigen::EigenSolver<MatrixXd> solver;
+};
+
+// thread-local so this might work even if called in parallel
+// from multiple threads
+thread_local Workspace work;
+
 // Balancing function as described by B. N. Parlett and C. Reinsch,
 // "Balancing a Matrix for Calculation of Eigenvalues and Eigenvectors".
 // In: Numerische Mathematik, Volume 13, Number 4 (1969), 293-304,
@@ -177,7 +187,12 @@ bool FindPolynomialRootsCompanionMatrix(const Eigen::VectorXd& polynomial_in,
     return false;
   }
 
-  VectorXd polynomial = RemoveLeadingZeros(polynomial_in);
+  VectorXd &polynomial = work.polynomial;
+  if (polynomial_in.size() > 0 && polynomial_in(0) == 0.0) {
+    polynomial = RemoveLeadingZeros(polynomial_in);
+  } else {
+    polynomial = polynomial_in;
+  }
   const int degree = polynomial.size() - 1;
 
   // Is the polynomial constant?
@@ -210,12 +225,13 @@ bool FindPolynomialRootsCompanionMatrix(const Eigen::VectorXd& polynomial_in,
   polynomial /= leading_term;
 
   // Build and balance the companion matrix to the polynomial.
-  MatrixXd companion_matrix(degree, degree);
+  MatrixXd &companion_matrix = work.companion_matrix;
   BuildCompanionMatrix(polynomial, &companion_matrix);
   BalanceCompanionMatrix(&companion_matrix);
 
   // Find its (complex) eigenvalues.
-  Eigen::EigenSolver<MatrixXd> solver(companion_matrix, false);
+  Eigen::EigenSolver<MatrixXd> &solver = work.solver;
+  solver.compute(companion_matrix, false);
   if (solver.info() != Eigen::Success) {
     std::cout << "Failed to extract eigenvalues from companion matrix." << std::endl;
     assert(false);
