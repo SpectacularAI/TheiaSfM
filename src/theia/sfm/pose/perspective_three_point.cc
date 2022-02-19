@@ -48,6 +48,8 @@ using Eigen::Matrix3d;
 using Eigen::Vector2d;
 using Eigen::Vector3d;
 
+thread_local Eigen::VectorXd workspace_roots;
+
 namespace {
 
 // Solves for cos(theta) that will describe the rotation of the plane from
@@ -94,7 +96,7 @@ int SolvePlaneRotation(const Vector3d normalized_image_points[3],
   const double b_pw2 = (*b) * (*b);
 
   // Computation of coefficients of 4th degree polynomial.
-  Eigen::VectorXd coefficients(5);
+  Eigen::Matrix<double, 5, 1> coefficients;
   coefficients(0) = -f_2_pw2 * p_2_pw4 - p_2_pw4 * f_1_pw2 - p_2_pw4;
   coefficients(1) =
       2.0 * p_2_pw3 * d_12 * (*b) + 2.0 * f_2_pw2 * p_2_pw3 * d_12 * (*b) -
@@ -117,7 +119,7 @@ int SolvePlaneRotation(const Vector3d normalized_image_points[3],
       f_2_pw2 * p_2_pw2 * d_12_pw2 * b_pw2;
 
   // Computation of roots.
-  Eigen::VectorXd roots;
+  Eigen::VectorXd &roots = workspace_roots;
   FindPolynomialRoots(coefficients, &roots, NULL);
 
   // Calculate cot(alpha) needed for back-substitution.
