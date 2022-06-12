@@ -63,8 +63,21 @@ using dls_impl::LeftMultiplyMatrix;
 // system of equations from the jacobian of the cost function, and solve these
 // equations via a Macaulay matrix to obtain the roots (i.e., the 3 parameters
 // of rotation). The translation can then be obtained through back-substitution.
-void DlsPnp(const std::vector<Vector2d>& feature_position,
+void DlsPnp(const std::vector<Eigen::Vector2d>& feature_positions,
+            const std::vector<Eigen::Vector3d>& world_point,
+            std::vector<Eigen::Quaterniond>* solution_rotation,
+            std::vector<Eigen::Vector3d>* solution_translation) {
+    DlsPnpDeterministic(
+        feature_positions,
+        world_point,
+        Eigen::Vector4d::Random(),
+        solution_rotation,
+        solution_translation);
+}
+
+void DlsPnpDeterministic(const std::vector<Vector2d>& feature_position,
             const std::vector<Vector3d>& world_point,
+            const Eigen::Vector4d &randomVecUniformMinusOneToOne,
             std::vector<Quaterniond>* solution_rotation,
             std::vector<Vector3d>* solution_translation) {
   assert(feature_position.size() >= 3);
@@ -129,7 +142,7 @@ void DlsPnp(const std::vector<Vector2d>& feature_position,
 
   // We create one equation with random terms that is generally non-zero at the
   // roots of our system.
-  const Eigen::Vector4d rand_vec = 100.0 * Eigen::Vector4d::Random();
+  const Eigen::Vector4d rand_vec = 100.0 * randomVecUniformMinusOneToOne;
   const double macaulay_term[4] = {rand_vec(0),
                                    rand_vec(1),
                                    rand_vec(2),

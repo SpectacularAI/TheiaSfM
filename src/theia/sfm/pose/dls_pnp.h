@@ -63,6 +63,16 @@ void DlsPnp(const std::vector<Eigen::Vector2d>& feature_positions,
             const std::vector<Eigen::Vector3d>& world_point,
             std::vector<Eigen::Quaterniond>* solution_rotation,
             std::vector<Eigen::Vector3d>* solution_translation);
+
+// Same as DlsPnp but uses a random seed vector given by the user. In the
+// non-deterministic variant above, that vector is set to
+// Eigen::Vector4d::Random().
+void DlsPnpDeterministic(const std::vector<Eigen::Vector2d>& feature_positions,
+            const std::vector<Eigen::Vector3d>& world_point,
+            const Eigen::Vector4d &randomVecUniformMinusOneToOne,
+            std::vector<Eigen::Quaterniond>* solution_rotation,
+            std::vector<Eigen::Vector3d>* solution_translation);
+
 }  // namespace theia
 
 #endif  // THEIA_SFM_POSE_DLS_PNP_H_
