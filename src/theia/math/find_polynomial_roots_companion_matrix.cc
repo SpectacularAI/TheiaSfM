@@ -233,8 +233,8 @@ bool FindPolynomialRootsCompanionMatrix(const Eigen::VectorXd& polynomial_in,
   Eigen::EigenSolver<MatrixXd> &solver = work.solver;
   solver.compute(companion_matrix, false);
   if (solver.info() != Eigen::Success) {
-    std::cout << "Failed to extract eigenvalues from companion matrix." << std::endl;
-    assert(false);
+    // NOTE Happens often, do not spam to stdout.
+    // std::cout << "Failed to extract eigenvalues from companion matrix." << std::endl;
     return false;
   }
 
