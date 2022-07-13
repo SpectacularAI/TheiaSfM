@@ -108,10 +108,12 @@ class CalibratedAbsolutePoseEstimator
                const CalibratedAbsolutePose& absolute_pose) const {
     // The reprojected point is computed as R * (X - c) where R is the camera
     // rotation, c is the position, and X is the 3D point.
-    const Eigen::Vector2d reprojected_feature =
-        (absolute_pose.rotation *
-         (correspondence.world_point - absolute_pose.position)).hnormalized();
-    return (reprojected_feature - correspondence.feature).squaredNorm();
+    // 2022-07-13 MSVC optimized this very poorly unless each operation was done on separate lines
+    const Eigen::Vector3d translated = correspondence.world_point - absolute_pose.position;
+    const Eigen::Vector3d rotated = absolute_pose.rotation * translated;
+    const Eigen::Vector2d reprojected_feature = rotated.hnormalized();
+    const Eigen::Vector2d error = reprojected_feature - correspondence.feature;
+    return error.squaredNorm();
   }
 };
 
