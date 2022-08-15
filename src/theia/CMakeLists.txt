@@ -193,7 +193,7 @@ set(THEIA_SRC
   # sfm/view_graph/view_graph.cc
   # sfm/visibility_pyramid.cc
   solvers/exhaustive_sampler.cc
-  # solvers/prosac_sampler.cc
+  solvers/prosac_sampler.cc
   solvers/random_sampler.cc
   # util/filesystem.cc
   util/random.cc
