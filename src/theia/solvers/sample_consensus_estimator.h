@@ -352,7 +352,7 @@ bool SampleConsensusEstimator<ModelEstimator>::Estimate(
       1.0 - pow(1.0 - pow(inlier_ratio, estimator_.SampleSize()),
                 summary->num_iterations);
 
-  return true;
+  return !summary->inliers.empty();
 }
 
 }  // namespace theia
