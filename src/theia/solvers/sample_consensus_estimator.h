@@ -268,6 +268,7 @@ bool SampleConsensusEstimator<ModelEstimator>::Estimate(
 
   const double log_failure_prob = log(ransac_params_.failure_probability);
   double best_cost = std::numeric_limits<double>::max();
+  bool model_found = false;
   int max_iterations = ransac_params_.max_iterations;
 
   // Set the max iterations if the inlier ratio is set.
@@ -316,6 +317,7 @@ bool SampleConsensusEstimator<ModelEstimator>::Estimate(
       if (sample_cost < best_cost) {
         *best_model = temp_model;
         best_cost = sample_cost;
+        model_found = true;
 
         if (inlier_ratio <
             estimator_.SampleSize() / static_cast<double>(data.size())) {
@@ -335,6 +337,11 @@ bool SampleConsensusEstimator<ModelEstimator>::Estimate(
     }
   }
 
+  if (!model_found) {
+    summary->confidence = 0.0;
+    return false;
+  }
+
   // Compute the final inliers for the best model.
   estimator_.Residuals(data, *best_model, best_residuals);
   quality_measurement_->ComputeCost(best_residuals, &summary->inliers);
@@ -345,7 +352,7 @@ bool SampleConsensusEstimator<ModelEstimator>::Estimate(
       1.0 - pow(1.0 - pow(inlier_ratio, estimator_.SampleSize()),
                 summary->num_iterations);
 
-  return true;
+  return !summary->inliers.empty();
 }
 
 }  // namespace theia
